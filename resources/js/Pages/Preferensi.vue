@@ -2,7 +2,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import axios from 'axios';
 import { Chart, registerables } from 'chart.js';
-import { onMounted, ref, computed } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 
 // Register all Chart.js components
 Chart.register(...registerables);
@@ -74,11 +74,11 @@ const getCriteria = computed(() => {
     const firstValue = Object.values(tableData.value.matrix)[0];
     return firstValue ? Object.keys(firstValue).length : 0;
 });
-const getAlternative = computed(() => {
-    if (!tableData.value?.matrix) return 0;
-    const firstValue = Object.values(tableData.value.matrix);
-    return firstValue ? Object.keys(firstValue).length : 0;
-});
+// const getAlternative = computed(() => {
+//     if (!tableData.value?.matrix) return 0;
+//     const firstValue = Object.values(tableData.value.matrix);
+//     return firstValue ? Object.keys(firstValue).length : 0;
+// });
 // Watch for method changes
 const handleMethodChange = () => {
     fetchTableData(); // Fetch data when method changes
@@ -95,7 +95,9 @@ onMounted(() => {
         <div class="space-y-8">
             <!-- Select Method -->
             <div class="mx-40 my-4">
-                <label for="method" class="text-lg font-bold mr-4">Pilih Metode:</label>
+                <label for="method" class="mr-4 text-lg font-bold"
+                    >Pilih Metode:</label
+                >
                 <select
                     id="method"
                     v-model="selectedMethod"
@@ -109,20 +111,28 @@ onMounted(() => {
 
             <!-- Ranking Bar Chart -->
             <div class="card mx-40">
-                <h2 class="text-xl font-bold text-center mb-10">Top 3 Karyawan</h2>
+                <h2 class="mb-10 text-center text-xl font-bold">
+                    Top 3 Karyawan
+                </h2>
                 <div class="relative h-80">
                     <canvas ref="rankingChartRef"></canvas>
                 </div>
             </div>
 
             <!-- Original Tables -->
-            <div v-if="tableData && tableData['matrix']" class="flex overflow-auto">
+            <div
+                v-if="tableData && tableData['matrix']"
+                class="flex overflow-auto"
+            >
                 <table class="table-pin-cols table">
                     <thead class="bg-base-300 text-center text-lg font-bold">
                         <tr>
                             <th style="width: 25%">Alternatif</th>
                             <th
-                                v-for="(value, index) in Array.from({ length: getCriteria }, (_, i) => i)"
+                                v-for="(value, index) in Array.from(
+                                    { length: getCriteria },
+                                    (_, i) => i,
+                                )"
                                 :key="index"
                                 style="10%"
                             >
@@ -145,7 +155,12 @@ onMounted(() => {
             </div>
 
             <!-- Weighted, Normalization, and Ranking Tables -->
-            <h2 class="divider text-xl font-bold">Bobot dan Kriteria</h2>
+            <h2
+                v-if="selectedMethod !== 'wp'"
+                class="divider text-xl font-bold"
+            >
+                Bobot dan Kriteria
+            </h2>
             <div
                 class="flex overflow-auto"
                 v-if="tableData && tableData['normalization']"
@@ -155,7 +170,10 @@ onMounted(() => {
                         <tr>
                             <th style="width: 25%">Alternatif</th>
                             <th
-                                v-for="(value, index) in Array.from({ length: getCriteria }, (_, i) => i)"
+                                v-for="(value, index) in Array.from(
+                                    { length: getCriteria },
+                                    (_, i) => i,
+                                )"
                                 :key="index"
                                 style="10%"
                             >
@@ -165,7 +183,9 @@ onMounted(() => {
                     </thead>
                     <tbody class="text-center">
                         <tr
-                            v-for="(item, index, iter) in tableData['normalization']"
+                            v-for="(item, index, iter) in tableData[
+                                'normalization'
+                            ]"
                             :key="index"
                         >
                             <td>A{{ iter + 1 }}</td>
@@ -177,7 +197,12 @@ onMounted(() => {
                 </table>
             </div>
 
-            <h2 class="divider text-xl font-bold">Normalisasi</h2>
+            <h2
+                v-if="selectedMethod !== 'wp'"
+                class="divider text-xl font-bold"
+            >
+                Normalisasi
+            </h2>
             <div
                 class="flex overflow-auto"
                 v-if="tableData && tableData['weighted']"
