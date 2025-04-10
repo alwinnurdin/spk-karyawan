@@ -24,6 +24,7 @@ const form = reactive({
         weight: '',
         attribute: '',
         value: '',
+        alternative_name: '',
     },
 });
 
@@ -95,6 +96,7 @@ watch(
                 weight: '',
                 attribute: '',
                 value: '',
+                alternative_name: '',
             };
             validationError.value = null;
         }
@@ -137,6 +139,17 @@ watch(
                     />
                 </div>
                 <template v-if="type === 'alternative'">
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text">Alternatif</span>
+                        </label>
+                        <input
+                            v-model="form.data.alternative_name"
+                            type="alternative"
+                            class="input input-bordered w-full"
+                            required
+                        />
+                    </div>
                     <div class="form-control">
                         <label class="label">
                             <span class="label-text">Email</span>

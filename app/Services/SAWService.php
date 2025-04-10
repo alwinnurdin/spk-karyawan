@@ -150,6 +150,7 @@ class SawService
                 $alternative = $alternatives->firstWhere('id', $altId);
                 $finalScores[] = [
                     'id' => $altId,
+                    'alternative_name' => $alternative->alternative_name,
                     'name' => $alternative->name,
                     'score' => array_sum($scores),
                     'details' => $scores

@@ -15,19 +15,12 @@ use Inertia\Response;
 
 class RegisteredUserController extends Controller
 {
-    /**
-     * Display the registration view.
-     */
+
     public function create(): Response
     {
         return Inertia::render('Auth/Register');
     }
 
-    /**
-     * Handle an incoming registration request.
-     *
-     * @throws \Illuminate\Validation\ValidationException
-     */
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
@@ -37,11 +30,14 @@ class RegisteredUserController extends Controller
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
+        $lastAlternative = User::latest('id')->first();
+        $lastId = $lastAlternative ? $lastAlternative->id : 0;
+        $formData['alternative_name'] = 'A' . ($lastId + 1);
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'dob' => $request->dob,
-            'password' => Hash::make($request->string('password')),
+            'dob' => $request->dob, 'password' => Hash::make($request->string('password')),
+            'alternative_name' => 'A' . ($lastId + 1),
         ]);
 
         event(new Registered($user));

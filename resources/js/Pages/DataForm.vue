@@ -163,13 +163,11 @@ watch(
                                 </thead>
                                 <tbody class="text-center">
                                     <tr
-                                        v-for="(item, index) in tableData[
-                                            'alternative'
-                                        ]"
+                                        v-for="item in tableData['alternative']"
                                         :key="item.id"
                                     >
                                         <td class="text-center">
-                                            A{{ index + 1 }}
+                                            {{ item.alternative_name }}
                                         </td>
                                         <td class="text-center">
                                             {{ item.name }}

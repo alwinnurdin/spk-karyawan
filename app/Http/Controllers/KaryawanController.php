@@ -25,35 +25,48 @@ class KaryawanController extends Controller
         $type = $request->type;
         $rules = [];
 
-        if ($type == 'alternative') {
-            $rules = [
-                'name' => 'required|string|max:255',
-                'email' => 'required|email',
-                'dob' => 'required|date',
-                'role' => 'required',
-            ];
-            $model = User::class;
+        switch ($type) {
+            case 'alternative':
+                $rules = [
+                    'name' => 'required|string|max:255',
+                    'email' => 'required|email',
+                    'dob' => 'required|date',
+                    'role' => 'required',
+                    'data.alternative_name' => 'required|string|max:255|unique:users,alternative_name,' . $request->input('data.id'),
+                ];
+                $model = User::class;
 
-            // Set the password as the same as the date of birth
-            if (!empty($formData['dob'])) {
-                $formData['password'] = bcrypt($formData['dob']);
-            }
-        } elseif ($type == 'criteria') {
-            $rules = [
-                'name' => 'required|string|max:255',
-                'weight' => 'required|numeric|min:0|max:100',
-                'attribute' => 'required|string|max:100'
-            ];
-            $model = Criteria::class;
-        } elseif ($type == 'subcriteria') {
-            $rules = [
-                'name' => 'required|string|max:255',
-                'value' => 'required|numeric|min:0|max:100',
-            ];
-            $model = SubCriteria::class;
-        } else {
-            return Redirect::back()
-                ->with('error', 'Invalid type specified');
+                // Set the password as the same as the date of birth
+                if (!empty($formData['dob'])) {
+                    $formData['password'] = bcrypt($formData['dob']);
+                }
+
+                // Generate alternative_name with increment
+                $lastAlternative = $model::latest('id')->first();
+                $lastId = $lastAlternative ? $lastAlternative->id : 0;
+                $formData['alternative_name'] = 'A' . ($lastId + 1);
+                break;
+
+            case 'criteria':
+                $rules = [
+                    'name' => 'required|string|max:255',
+                    'weight' => 'required|numeric|min:0|max:100',
+                    'attribute' => 'required|string|max:100'
+                ];
+                $model = Criteria::class;
+                break;
+
+            case 'subcriteria':
+                $rules = [
+                    'name' => 'required|string|max:255',
+                    'value' => 'required|numeric|min:0|max:100',
+                ];
+                $model = SubCriteria::class;
+                break;
+
+            default:
+                return Redirect::back()
+                    ->with('error', 'Invalid type specified');
         }
 
         try {
@@ -67,7 +80,7 @@ class KaryawanController extends Controller
 
             // Create data based on type
             $model::create($formData);
-            redirect()->back()->with(['refresh' => true, 'message' => 'Item berhasil ditambah']);
+            return redirect()->back()->with(['refresh' => true, 'message' => 'Item berhasil ditambah']);
 
         } catch (\Exception $e) {
             return Redirect::back()
@@ -104,6 +117,7 @@ class KaryawanController extends Controller
             $rules = [
                 'data.id' => 'required|exists:users,id',
                 'data.name' => 'required|string|max:255',
+                'data.alternative_name' => 'required|string|max:255|unique:users,alternative_name,' . $request->input('data.id'),
             ];
             $model = User::class;
         } elseif ($type == 'criteria') {
@@ -127,6 +141,19 @@ class KaryawanController extends Controller
         }
 
         $validatedData = $request->validate($rules);
+
+        // Check if alternative_name already exists for 'alternative' type
+        if ($type == 'alternative') {
+            $existingAlternative = User::where('alternative_name', $validatedData['data']['alternative_name'])
+                ->where('id', '!=', $validatedData['data']['id'])
+                ->first();
+
+            if ($existingAlternative) {
+                return Redirect::back()
+                    ->with('error', 'Alternative name already exists')
+                    ->with('refresh', true);
+            }
+        }
 
         // Find the model by ID
         $item = $model::findOrFail($validatedData['data']['id']);

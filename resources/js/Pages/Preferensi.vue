@@ -249,11 +249,10 @@ onMounted(() => {
                         </tr>
                     </thead>
                     <tbody class="text-center">
-                        <tr
-                            v-for="(item, index) in tableData['ranking']"
-                            :key="item.id"
-                        >
-                            <td>A{{ index + 1 }}</td>
+                        <!-- <tr v-for="(item, index) in tableData['ranking']" :key="item.id"> -->
+                        <!-- <td>A{{ index + 1 }}</td> -->
+                        <tr v-for="item in tableData['ranking']" :key="item.id">
+                            <td>{{ item.alternative_name }}</td>
                             <td>{{ item.name }}</td>
                             <td>{{ parseFloat(item.score).toFixed(3) }}</td>
                             <td class="font-bold">{{ item.rank }}</td>

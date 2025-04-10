@@ -9,16 +9,13 @@ use Illuminate\Support\Facades\DB;
 
 class WPService
 {
-    /**
-     * Get decision matrix from scores table
-     */
     private function getDecisionMatrix()
     {
         try {
             $matrix = [];
             $alternatives = User::all();
             $criterias = Criteria::all();
-            
+
             // Get all scores efficiently
             $scores = Score::all()->groupBy(['alternative_id', 'criteria_id']);
 
@@ -52,16 +49,16 @@ class WPService
 
         foreach ($matrix as $altId => $scores) {
             $sVector[$altId] = 1; // Initialize multiplication
-            
+
             foreach ($scores as $critId => $score) {
                 $criteria = $criterias->firstWhere('id', $critId);
                 $weight = $criteria->weight / 100; // Convert percentage to decimal
-                
+
                 // Adjust weight based on criteria attribute (benefit/cost)
                 if ($criteria->attribute === 'cost') {
                     $weight = -$weight; // Negative weight for cost criteria
                 }
-                
+
                 // Calculate S vector using power
                 $sVector[$altId] *= pow($score ?: 1, $weight);
             }
@@ -111,8 +108,10 @@ class WPService
             $finalScores = [];
             foreach ($vVector as $altId => $score) {
                 $alternative = $alternatives->firstWhere('id', $altId);
+                echo $alternative;
                 $finalScores[] = [
                     'id' => $altId,
+                    'alternative_name' => 'AA',
                     'name' => $alternative->name,
                     'score' => $score,
                     's_value' => $sVector[$altId],
@@ -122,7 +121,7 @@ class WPService
             }
 
             // Sort by V value (score) descending
-            usort($finalScores, function($a, $b) {
+            usort($finalScores, function ($a, $b) {
                 return $b['score'] <=> $a['score'];
             });
 
