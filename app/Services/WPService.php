@@ -110,7 +110,7 @@ class WPService
                 $alternative = $alternatives->firstWhere('id', $altId);
                 $finalScores[] = [
                     'id' => $altId,
-                    'alternative_name' => 'AA',
+                    'alternative_name' => $alternative->alternative_name,
                     'name' => $alternative->name,
                     'score' => $score,
                     's_value' => $sVector[$altId],
