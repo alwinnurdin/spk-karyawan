@@ -108,7 +108,6 @@ class WPService
             $finalScores = [];
             foreach ($vVector as $altId => $score) {
                 $alternative = $alternatives->firstWhere('id', $altId);
-                echo $alternative;
                 $finalScores[] = [
                     'id' => $altId,
                     'alternative_name' => 'AA',
