@@ -41,27 +41,50 @@
     @if(!isset($saw['ranking']))
         <p>Error: 'ranking' is not defined in $saw.</p>
     @endif
+
+    <h2>SAW Ranking</h2>
     <table>
         <thead>
             <tr>
                 <th>Alternative</th>
                 <th>Nama</th>
+                <th>Ranking</th>
                 <th>SAW Score</th>
-                <th>WP Score</th>
             </tr>
         </thead>
         <tbody>
             @foreach ($saw['ranking'] as $row)
                 <tr>
-                    <td>{{ $row['rank'] }}</td>
-                    <td>{{ $row['name'] }}</td>
                     <td>{{ $row['alternative_name'] }}</td>
+                    <td>{{ $row['name'] }}</td>
+                    <td>{{ $row['rank'] }}</td>
                     <td>{{ number_format($row['score'], 4) }}</td>
                 </tr>
             @endforeach
         </tbody>
     </table>
-    <h2>Matrix</h2>
+    <h2>WP Ranking</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Alternative</th>
+                <th>Nama</th>
+                <th>Ranking</th>
+                <th>SAW Score</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach ($wp['ranking'] as $row)
+                <tr>
+                    <td>{{ $row['alternative_name'] }}</td>
+                    <td>{{ $row['name'] }}</td>
+                    <td>{{ $row['rank'] }}</td>
+                    <td>{{ number_format($row['score'], 4) }}</td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
+    <!-- <h2>Matrix</h2>
     <table border="1" cellspacing="0" cellpadding="5">
         <thead>
             <tr>
@@ -81,7 +104,7 @@
                 </tr>
             @endforeach
         </tbody>
-    </table>
+    </table> -->
 
 </body>
 
