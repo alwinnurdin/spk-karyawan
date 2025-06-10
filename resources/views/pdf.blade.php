@@ -48,6 +48,8 @@
             <tr>
                 <th>Alternative</th>
                 <th>Nama</th>
+                <th>Email</th>
+                <th>Tanggal Lahir</th>
                 <th>Ranking</th>
                 <th>SAW Score</th>
             </tr>
@@ -57,6 +59,8 @@
                 <tr>
                     <td>{{ $row['alternative_name'] }}</td>
                     <td>{{ $row['name'] }}</td>
+                    <td>{{ $karyawan->where('id', $row['id'])->first()->email ?? 'N/A' }}</td>
+                    <td>{{ $karyawan->where('id', $row['id'])->first()->dob ?? 'N/A' }}</td>
                     <td>{{ $row['rank'] }}</td>
                     <td>{{ number_format($row['score'], 4) }}</td>
                 </tr>
@@ -69,6 +73,8 @@
             <tr>
                 <th>Alternative</th>
                 <th>Nama</th>
+                <th>Email</th>
+                <th>Tanggal Lahir</th>
                 <th>Ranking</th>
                 <th>SAW Score</th>
             </tr>
@@ -78,12 +84,15 @@
                 <tr>
                     <td>{{ $row['alternative_name'] }}</td>
                     <td>{{ $row['name'] }}</td>
+                    <td>{{ $karyawan->where('id', $row['id'])->first()->email ?? 'N/A' }}</td>
+                    <td>{{ $karyawan->where('id', $row['id'])->first()->dob ?? 'N/A' }}</td>
                     <td>{{ $row['rank'] }}</td>
                     <td>{{ number_format($row['score'], 4) }}</td>
                 </tr>
             @endforeach
         </tbody>
     </table>
+
     <!-- <h2>Matrix</h2>
     <table border="1" cellspacing="0" cellpadding="5">
         <thead>
