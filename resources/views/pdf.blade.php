@@ -2,22 +2,30 @@
 <html>
 
 <head>
-    <title>Smartusers PDF</title>
+    <meta charset="utf-8">
+    <title>Hasil Preferensi Karyawan</title>
     <style>
         body {
-            font-family: sans-serif;
+            font-family: DejaVu Sans, sans-serif;
+            font-size: 12px;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
+            margin-bottom: 30px;
         }
 
         th,
         td {
             border: 1px solid #444;
             padding: 6px;
-            text-align: left;
+            text-align: center;
         }
 
         th {
@@ -27,44 +35,54 @@
 </head>
 
 <body>
-    <h2>Report Karyawan</h2>
+    <h2>Hasil Perhitungan SAW dan WP</h2>
+
+    <!-- {{ var_dump($saw) }} -->
+    @if(!isset($saw['ranking']))
+        <p>Error: 'ranking' is not defined in $saw.</p>
+    @endif
     <table>
         <thead>
             <tr>
-                <th>ID</th>
+                <th>Alternative</th>
                 <th>Nama</th>
-                <th>E-Mail</th>
-                <th>Tanggal Lahir</th>
-                <th>Jabatan</th>
+                <th>SAW Score</th>
+                <th>WP Score</th>
             </tr>
         </thead>
         <tbody>
-            @foreach($karyawan as $user)
+            @foreach ($saw['ranking'] as $row)
                 <tr>
-                    <td>{{ $user->id }}</td>
-                    <td>{{ $user->name}}</td>
-                    <td>{{ $user->email}}</td>
-                    <td>{{ $user->dob}}</td>
-                    <td>{{ $user->role}}</td>
+                    <td>{{ $row['rank'] }}</td>
+                    <td>{{ $row['name'] }}</td>
+                    <td>{{ $row['alternative_name'] }}</td>
+                    <td>{{ number_format($row['score'], 4) }}</td>
                 </tr>
             @endforeach
         </tbody>
     </table>
-    <h2>Report Karyawan</h2>
-    <table>
+    <h2>Matrix</h2>
+    <table border="1" cellspacing="0" cellpadding="5">
         <thead>
             <tr>
-                <th>Nama</th>
-                <th>Kerap</th>
-                <th>Tanggal Lahir</th>
-                <th>Jabatan</th>
+                <th>Alternative</th>
+                @foreach ($saw['matrix'][array_key_first($saw['matrix'])] as $criteriaId => $val)
+                    <th>Criteria {{ $criteriaId }}</th>
+                @endforeach
             </tr>
         </thead>
         <tbody>
-            {{ $wp }}
-           
+            @foreach ($saw['matrix'] as $altId => $criteriaVals)
+                <tr>
+                    <td>A{{ $altId }}</td>
+                    @foreach ($criteriaVals as $value)
+                        <td>{{ $value }}</td>
+                    @endforeach
+                </tr>
+            @endforeach
         </tbody>
     </table>
+
 </body>
 
 </html>
