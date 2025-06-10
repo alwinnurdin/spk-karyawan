@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Barryvdh\DomPDF\Facade\Pdf; 
 use App\Models\Criteria;
 use App\Models\SubCriteria;
 use App\Models\Score;
@@ -274,5 +275,21 @@ class KaryawanController extends Controller
         ];
 
         return response()->json(['data' => $data]);
+    }
+
+    public function exportPdf()
+    {
+        // Ensure SAWService is imported or defined
+        $sawService = app()->make(\App\Services\SAWService::class); // Resolve the required service
+        $sawController = new SAWController($sawService);
+        $wpService = app()->make(\App\Services\WPService::class); // Resolve the required service
+        $wpController = new WPController($wpService);
+
+        $saw = $sawController->calculate(request());
+        $wp = $wpController->calculate(request());
+        $karyawan = User::all();
+
+        $pdf = Pdf::loadView('pdf', compact(['karyawan', 'saw', 'wp']));
+        return $pdf->download('karyawan.pdf');
     }
 }

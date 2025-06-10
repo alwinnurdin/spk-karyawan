@@ -32,6 +32,23 @@ const fetchTableData = async () => {
     }
 };
 
+// Download PDF Function
+const downloadPDF = async () => {
+    try {
+        const response = await axios.get('/pdf', {
+            responseType: 'blob',
+        });
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', 'karyawan.pdf');
+        document.body.appendChild(link);
+        link.click();
+    } catch (error) {
+        console.error('Error downloading PDF:', error);
+    }
+};
+
 // Initialize Ranking Bar Chart (Limit to top 3 rankings)
 const createRankingChart = () => {
     if (!tableData.value?.ranking) return;
@@ -92,22 +109,22 @@ onMounted(() => {
 
 <template>
     <AuthenticatedLayout>
-        <div class="space-y-8">
-            <!-- Select Method -->
-            <div class="mx-40 my-4">
-                <label for="method" class="mr-4 text-lg font-bold"
-                    >Pilih Metode:</label
-                >
-                <select
-                    id="method"
-                    v-model="selectedMethod"
-                    @change="handleMethodChange"
-                    class="select select-bordered w-full max-w-xs"
-                >
-                    <option value="saw">SAW</option>
-                    <option value="wp">WP</option>
-                </select>
-            </div>
+        <!-- <div class="space-y-8">
+        </div> -->
+        <!-- Select Method -->
+        <div class="mx-40 my-4">
+            <label for="method" class="mr-4 text-lg font-bold"
+                >Pilih Metode:</label
+            >
+            <select
+                id="method"
+                v-model="selectedMethod"
+                @change="handleMethodChange"
+            >
+                <option value="saw">SAW</option>
+                <option value="wp">WP</option>
+            </select>
+            <button class="btn btn-primary" @click="downloadPDF">PRINT</button>
 
             <!-- Ranking Bar Chart -->
             <div class="card mx-40">
@@ -118,7 +135,14 @@ onMounted(() => {
                     <canvas ref="rankingChartRef"></canvas>
                 </div>
             </div>
-
+            <div class="card mx-40">
+                <!-- <button
+                    class="btn btn-primary"
+                    @click="window.location.href = '/karyawan/pdf'"
+                >
+                    PRINT
+                </button> -->
+            </div>
             <!-- Original Tables -->
             <div
                 v-if="tableData && tableData['matrix']"
